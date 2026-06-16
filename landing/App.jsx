@@ -36,7 +36,6 @@ const styles = `
     overflow-x: hidden;
   }
 
-  /* HEADER */
   .header {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -121,14 +120,23 @@ const styles = `
     transform: translateY(-1px);
   }
 
-  /* HERO */
+  /* Hero scroll-zoom rig: a tall scroll track that pins a sticky stage inside it.
+     As the user scrolls through the track, JS computes a 0→1 progress value
+     and applies it as inline transforms (scale/opacity/translate) on the
+     phone visual and the text block — this is what makes the zoom continuous
+     and tied to scroll position, rather than a one-shot reveal animation. */
+  .hero-track {
+    position: relative;
+    height: 220vh;
+  }
   .hero {
-    min-height: 100vh;
+    position: sticky;
+    top: 0;
+    height: 100vh;
     padding: 120px 5% 80px;
     display: flex;
     align-items: center;
     background: linear-gradient(160deg, var(--warm-white) 0%, var(--sand) 60%, #ecddd0 100%);
-    position: relative;
     overflow: hidden;
   }
   .hero::before {
@@ -162,6 +170,25 @@ const styles = `
     grid-template-columns: 1fr 1fr;
     gap: 4rem;
     align-items: center;
+    will-change: transform, opacity;
+  }
+
+  /* The zoom stage wraps the phone; its transform is driven entirely by
+     inline style set from scroll progress in the component below. */
+  .zoom-stage {
+    will-change: transform;
+    transform-origin: center center;
+  }
+
+  /* Fades the hero content out as the next section's scrim rises over it,
+     giving the "closer, closer, until—" sensation from the reference video. */
+  .hero-scrim {
+    position: absolute;
+    inset: 0;
+    background: var(--plum);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
   }
 
   .hero-badge {
@@ -226,7 +253,6 @@ const styles = `
     position: relative;
   }
 
-  /* Phone mockup */
   .phone-mockup {
     width: 260px;
     height: 520px;
@@ -378,7 +404,6 @@ const styles = `
   .float-label { font-size: 0.6rem; color: var(--text-light); }
   .float-value { font-size: 0.75rem; font-weight: 700; color: var(--text-dark); }
 
-  /* SECTIONS COMMUNES */
   .section {
     padding: 100px 5%;
   }
@@ -411,7 +436,6 @@ const styles = `
     line-height: 1.7;
   }
 
-  /* REVEAL ANIMATIONS */
   .reveal {
     opacity: 0;
     transform: translateY(24px);
@@ -427,7 +451,6 @@ const styles = `
   .reveal-delay-4 { transition-delay: 0.4s; }
   .reveal-delay-5 { transition-delay: 0.5s; }
 
-  /* PROBLÈME */
   .problem-section {
     background: var(--plum);
     color: white;
@@ -469,7 +492,6 @@ const styles = `
     font-style: normal;
   }
 
-  /* FONCTIONNALITÉS */
   .features-section { background: var(--warm-white); }
 
   .features-grid {
@@ -530,7 +552,6 @@ const styles = `
     line-height: 1.6;
   }
 
-  /* Mockups fonctionnalités */
   .feat-mock {
     width: 100%;
     height: 100%;
@@ -612,7 +633,6 @@ const styles = `
   .reward-name { font-weight: 700; color: var(--text-dark); }
   .reward-stars { color: #f5a623; font-size: 0.55rem; }
 
-  /* COMMENT ÇA MARCHE */
   .how-section { background: var(--cream); }
   .steps-grid {
     display: grid;
@@ -647,17 +667,6 @@ const styles = `
     position: relative;
     display: inline-block;
   }
-  .step-number-inner {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--terracotta);
-    font-family: var(--serif);
-  }
 
   .step-icon-wrap {
     width: 72px;
@@ -684,7 +693,6 @@ const styles = `
     line-height: 1.65;
   }
 
-  /* RÉASSURANCE */
   .reassurance-section { background: var(--sand); }
   .pillars-grid {
     display: grid;
@@ -722,7 +730,6 @@ const styles = `
     line-height: 1.6;
   }
 
-  /* TÉMOIGNAGES */
   .testimonials-section { background: var(--warm-white); }
   .testimonials-grid {
     display: grid;
@@ -779,7 +786,6 @@ const styles = `
     color: var(--text-light);
   }
 
-  /* FAQ */
   .faq-section { background: var(--cream); }
   .faq-list {
     max-width: 720px;
@@ -840,7 +846,6 @@ const styles = `
     line-height: 1.75;
   }
 
-  /* CTA FINAL */
   .cta-final {
     background: linear-gradient(135deg, var(--plum) 0%, #2e1f3a 100%);
     padding: 120px 5%;
@@ -906,7 +911,6 @@ const styles = `
     color: rgba(255,255,255,0.4);
   }
 
-  /* FOOTER */
   .footer {
     background: var(--text-dark);
     padding: 3rem 5%;
@@ -942,7 +946,6 @@ const styles = `
   .footer-links a:hover { color: white; }
   .footer-copy { font-size: 0.8rem; }
 
-  /* RESPONSIVE */
   @media (max-width: 900px) {
     .hero-inner {
       grid-template-columns: 1fr;
@@ -970,48 +973,12 @@ const styles = `
 `;
 
 const features = [
-  {
-    icon: "✓",
-    title: "Tâches partagées",
-    desc: "Répartissez les responsabilités équitablement. Chaque parent voit ce qui lui appartient, sans négociation constante.",
-    gradient: "linear-gradient(135deg, #f5e6d8 0%, #ecddd0 100%)",
-    mock: "tasks",
-  },
-  {
-    icon: "⭐",
-    title: "Missions & récompenses enfants",
-    desc: "Impliquez les enfants avec des défis adaptés à leur âge. Chaque mission accomplie devient une victoire collective.",
-    gradient: "linear-gradient(135deg, #e8f0e9 0%, #d4e6d6 100%)",
-    mock: "rewards",
-  },
-  {
-    icon: "₪",
-    title: "Budget familial",
-    desc: "Visualisez les dépenses du foyer en un coup d'œil. Pas de surprises en fin de mois.",
-    gradient: "linear-gradient(135deg, #ede8f5 0%, #ddd5ed 100%)",
-    mock: "budget",
-  },
-  {
-    icon: "✦",
-    title: "Assistant IA qui anticipe",
-    desc: "L'IA apprend vos habitudes et vous suggère ce dont votre famille aura besoin — avant que vous ne le demandiez.",
-    gradient: "linear-gradient(135deg, #f0e8e0 0%, #e5d5c8 100%)",
-    mock: "ai",
-  },
-  {
-    icon: "◎",
-    title: "Suivi du bien-être parental",
-    desc: "Un espace pour vous. Identifiez les périodes de surcharge et trouvez des moments de respiration.",
-    gradient: "linear-gradient(135deg, #e8f0e9 0%, #d4e8da 100%)",
-    mock: "wellbeing",
-  },
-  {
-    icon: "♡",
-    title: "Moments à deux",
-    desc: "Ne laissez pas la logistique empiéter sur votre relation. Planifiez des moments rien que pour vous.",
-    gradient: "linear-gradient(135deg, #f5e8ee 0%, #edd5e0 100%)",
-    mock: "couple",
-  },
+  { icon: "✓", title: "Tâches partagées", desc: "Répartissez les responsabilités équitablement. Chaque parent voit ce qui lui appartient, sans négociation constante.", mock: "tasks" },
+  { icon: "⭐", title: "Missions & récompenses enfants", desc: "Impliquez les enfants avec des défis adaptés à leur âge. Chaque mission accomplie devient une victoire collective.", mock: "rewards" },
+  { icon: "₪", title: "Budget familial", desc: "Visualisez les dépenses du foyer en un coup d'œil. Pas de surprises en fin de mois.", mock: "budget" },
+  { icon: "✦", title: "Assistant IA qui anticipe", desc: "L'IA apprend vos habitudes et vous suggère ce dont votre famille aura besoin — avant que vous ne le demandiez.", mock: "ai" },
+  { icon: "◎", title: "Suivi du bien-être parental", desc: "Un espace pour vous. Identifiez les périodes de surcharge et trouvez des moments de respiration.", mock: "wellbeing" },
+  { icon: "♡", title: "Moments à deux", desc: "Ne laissez pas la logistique empiéter sur votre relation. Planifiez des moments rien que pour vous.", mock: "couple" },
 ];
 
 function FeatureMock({ type }) {
@@ -1115,31 +1082,37 @@ function FeatureMock({ type }) {
 }
 
 const faqs = [
-  {
-    q: "Est-ce vraiment gratuit au départ ?",
-    a: "Oui. Notre Famille propose une version gratuite complète pour découvrir toutes les fonctionnalités essentielles. Sans carte bancaire requise au départ. Une offre famille étendue est disponible pour ceux qui souhaitent aller plus loin."
-  },
-  {
-    q: "Mes données sont-elles privées et sécurisées ?",
-    a: "Absolument. Vos données familiales ne sont jamais vendues ni partagées avec des tiers. Elles sont chiffrées et stockées en Europe, conformément au RGPD. Vous pouvez les supprimer à tout moment, définitivement."
-  },
-  {
-    q: "Sur quels appareils l'app fonctionne-t-elle ?",
-    a: "Notre Famille est disponible sur iOS et Android. Une version web accessible depuis navigateur est également prévue pour ceux qui préfèrent travailler depuis un ordinateur."
-  },
-  {
-    q: "Comment l'IA anticipe-t-elle les besoins de ma famille ?",
-    a: "L'assistant apprend progressivement les habitudes de votre foyer : rythme des courses, activités des enfants, événements récurrents. Il croise ces données avec le calendrier pour anticiper les tâches à venir et vous les suggérer avant qu'elles deviennent urgentes."
-  },
-  {
-    q: "Mon ou ma partenaire peut-il aussi utiliser l'app ?",
-    a: "C'est justement là l'essentiel. Notre Famille est conçue pour être utilisée en duo. Chaque parent a son propre espace, mais partage la vision globale de la famille. L'équité dans la répartition est au cœur de l'expérience."
-  },
-  {
-    q: "L'app fonctionne-t-elle pour les familles monoparentales ?",
-    a: "Tout à fait. Notre Famille s'adapte à toutes les configurations familiales. En famille monoparentale, l'assistant IA joue un rôle encore plus important pour vous aider à tout anticiper seul·e, avec plus d'efficacité."
-  }
+  { q: "Est-ce vraiment gratuit au départ ?", a: "Oui. Notre Famille propose une version gratuite complète pour découvrir toutes les fonctionnalités essentielles. Sans carte bancaire requise au départ. Une offre famille étendue est disponible pour ceux qui souhaitent aller plus loin." },
+  { q: "Mes données sont-elles privées et sécurisées ?", a: "Absolument. Vos données familiales ne sont jamais vendues ni partagées avec des tiers. Elles sont chiffrées et stockées en Europe, conformément au RGPD. Vous pouvez les supprimer à tout moment, définitivement." },
+  { q: "Sur quels appareils l'app fonctionne-t-elle ?", a: "Notre Famille est disponible sur iOS et Android. Une version web accessible depuis navigateur est également prévue pour ceux qui préfèrent travailler depuis un ordinateur." },
+  { q: "Comment l'IA anticipe-t-elle les besoins de ma famille ?", a: "L'assistant apprend progressivement les habitudes de votre foyer : rythme des courses, activités des enfants, événements récurrents. Il croise ces données avec le calendrier pour anticiper les tâches à venir et vous les suggérer avant qu'elles deviennent urgentes." },
+  { q: "Mon ou ma partenaire peut-il aussi utiliser l'app ?", a: "C'est justement là l'essentiel. Notre Famille est conçue pour être utilisée en duo. Chaque parent a son propre espace, mais partage la vision globale de la famille. L'équité dans la répartition est au cœur de l'expérience." },
+  { q: "L'app fonctionne-t-elle pour les familles monoparentales ?", a: "Tout à fait. Notre Famille s'adapte à toutes les configurations familiales. En famille monoparentale, l'assistant IA joue un rôle encore plus important pour vous aider à tout anticiper seul·e, avec plus d'efficacité." }
 ];
+
+function useScrollProgress(ref) {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const el = ref.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const trackHeight = el.offsetHeight - window.innerHeight;
+      if (trackHeight <= 0) return;
+      // How far we've scrolled through the tall track, clamped 0→1.
+      const raw = -rect.top / trackHeight;
+      setProgress(Math.min(1, Math.max(0, raw)));
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+  return progress;
+}
 
 function useReveal(ref) {
   useEffect(() => {
@@ -1148,9 +1121,7 @@ function useReveal(ref) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
+          if (entry.isIntersecting) entry.target.classList.add("visible");
         });
       },
       { threshold: 0.15 }
@@ -1185,7 +1156,9 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
 
-  const heroRef = useRef(null);
+  const heroTrackRef = useRef(null);
+  const heroProgress = useScrollProgress(heroTrackRef);
+
   const featRef = useRef(null);
   const howRef = useRef(null);
   const reassRef = useRef(null);
@@ -1210,7 +1183,6 @@ export default function App() {
     <>
       <style>{styles}</style>
 
-      {/* HEADER */}
       <header className={`header${scrolled ? " scrolled" : ""}`}>
         <a href="#" className="logo">Notre<span>Famille</span></a>
         <nav className="nav">
@@ -1223,77 +1195,107 @@ export default function App() {
         </nav>
       </header>
 
-      {/* HERO */}
-      <section className="hero" ref={heroRef}>
-        <div className="hero-inner">
-          <div className="hero-content">
-            <div className="hero-badge">Assistant IA familial</div>
-            <h1 className="hero-title">
-              Vous portez tout.<br />
-              <em>Notre Famille</em><br />
-              porte le reste.
-            </h1>
-            <p className="hero-subtitle">
-              L'assistant IA qui apprend les habitudes de votre foyer et anticipe les besoins de votre famille — avant même que vous y pensiez.
-            </p>
-            <div className="hero-ctas">
-              <a href="#cta" className="btn-primary">Commencer gratuitement →</a>
-              <a href="#how" className="btn-secondary">Voir comment ça marche</a>
-            </div>
-          </div>
-
-          <div className="hero-visual">
-            <div className="phone-float-card left">
-              <span className="float-emoji">✓</span>
-              <div className="float-label">Tâches aujourd'hui</div>
-              <div className="float-value">4 sur 6 faites</div>
-            </div>
-
-            <div className="phone-mockup">
-              <div className="phone-notch" />
-              <div className="phone-screen">
-                <div className="phone-status-bar">
-                  <span>9:41</span>
-                  <span>●●●</span>
-                </div>
-                <div className="phone-app-header">
-                  <div className="phone-app-title">Bonjour Marie ✦</div>
-                  <div className="phone-avatar-row">
-                    <div className="phone-avatar" style={{ background: "linear-gradient(135deg, #c96a3b, #e07d4e)" }} />
-                    <div className="phone-avatar" style={{ background: "linear-gradient(135deg, #4a3550, #6b4f7a)" }} />
-                  </div>
-                </div>
-                <div className="phone-ai-card">
-                  <div className="phone-ai-label">✦ Assistant IA</div>
-                  <div className="phone-ai-msg">Demain, Emma a natation à 17h. Thomas peut récupérer si vous confirmez maintenant.</div>
-                </div>
-                <div className="phone-tasks">
-                  <div className="phone-tasks-label">À faire</div>
-                  {[
-                    { color: "#c96a3b", text: "Appel médecin", tag: "Urgent", tagBg: "#fde8dc", tagCol: "#c96a3b" },
-                    { color: "#7a9e7e", text: "Repas semaine", tag: "Courses", tagBg: "#e8f0e9", tagCol: "#4d7a52" },
-                    { color: "#9b85b0", text: "Cotisation école", tag: "Budget", tagBg: "#ede8f5", tagCol: "#6b4f7a" },
-                  ].map((t, i) => (
-                    <div key={i} className="phone-task-item">
-                      <div className="phone-task-dot" style={{ background: t.color }} />
-                      <span className="phone-task-text">{t.text}</span>
-                      <span className="phone-task-tag" style={{ background: t.tagBg, color: t.tagCol }}>{t.tag}</span>
-                    </div>
-                  ))}
-                </div>
+      <div className="hero-track" ref={heroTrackRef}>
+        <section className="hero">
+          <div className="hero-scrim" style={{ opacity: heroProgress * 0.94 }} />
+          <div
+            className="hero-inner"
+            style={{
+              opacity: 1 - heroProgress * 0.9,
+              transform: `translateY(${heroProgress * -40}px)`,
+            }}
+          >
+            <div className="hero-content">
+              <div className="hero-badge">Assistant IA familial</div>
+              <h1 className="hero-title">
+                Vous portez tout.<br />
+                <em>Notre Famille</em><br />
+                porte le reste.
+              </h1>
+              <p className="hero-subtitle">
+                L'assistant IA qui apprend les habitudes de votre foyer et anticipe les besoins de votre famille — avant même que vous y pensiez.
+              </p>
+              <div className="hero-ctas">
+                <a href="#cta" className="btn-primary">Commencer gratuitement →</a>
+                <a href="#how" className="btn-secondary">Voir comment ça marche</a>
               </div>
             </div>
 
-            <div className="phone-float-card right">
-              <span className="float-emoji">⚖️</span>
-              <div className="float-label">Répartition</div>
-              <div className="float-value">Équilibrée</div>
+            <div className="hero-visual">
+              <div className="phone-float-card left" style={{ opacity: 1 - heroProgress * 2.5 }}>
+                <span className="float-emoji">✓</span>
+                <div className="float-label">Tâches aujourd'hui</div>
+                <div className="float-value">4 sur 6 faites</div>
+              </div>
+
+              <div
+                className="zoom-stage"
+                style={{ transform: `scale(${1 + heroProgress * 2.4})` }}
+              >
+                <div className="phone-mockup">
+                  <div className="phone-notch" />
+                  <div className="phone-screen">
+                    <div className="phone-status-bar">
+                      <span>9:41</span>
+                      <span>●●●</span>
+                    </div>
+                    <div className="phone-app-header">
+                      <div className="phone-app-title">Bonjour Marie ✦</div>
+                      <div className="phone-avatar-row">
+                        <div className="phone-avatar" style={{ background: "linear-gradient(135deg, #c96a3b, #e07d4e)" }} />
+                        <div className="phone-avatar" style={{ background: "linear-gradient(135deg, #4a3550, #6b4f7a)" }} />
+                      </div>
+                    </div>
+                    <div className="phone-ai-card">
+                      <div className="phone-ai-label">✦ Assistant IA</div>
+                      <div className="phone-ai-msg">Demain, Emma a natation à 17h. Thomas peut récupérer si vous confirmez maintenant.</div>
+                    </div>
+                    <div className="phone-tasks">
+                      <div className="phone-tasks-label">À faire</div>
+                      {[
+                        { color: "#c96a3b", text: "Appel médecin", tag: "Urgent", tagBg: "#fde8dc", tagCol: "#c96a3b" },
+                        { color: "#7a9e7e", text: "Repas semaine", tag: "Courses", tagBg: "#e8f0e9", tagCol: "#4d7a52" },
+                        { color: "#9b85b0", text: "Cotisation école", tag: "Budget", tagBg: "#ede8f5", tagCol: "#6b4f7a" },
+                      ].map((t, i) => (
+                        <div key={i} className="phone-task-item">
+                          <div className="phone-task-dot" style={{ background: t.color }} />
+                          <span className="phone-task-text">{t.text}</span>
+                          <span className="phone-task-tag" style={{ background: t.tagBg, color: t.tagCol }}>{t.tag}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="phone-float-card right" style={{ opacity: 1 - heroProgress * 2.5 }}>
+                <span className="float-emoji">⚖️</span>
+                <div className="float-label">Répartition</div>
+                <div className="float-value">Équilibrée</div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* PROBLÈME */}
+          {/* Caption that fades in as the zoom completes, echoing the
+              "Step inside" reveal-on-arrival moment from the reference clip. */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: "8%",
+              left: 0,
+              right: 0,
+              textAlign: "center",
+              opacity: Math.max(0, (heroProgress - 0.7) / 0.3),
+              zIndex: 6,
+            }}
+          >
+            <p style={{ fontFamily: "var(--serif)", fontSize: "clamp(1.4rem, 3vw, 2rem)", color: "#fff", letterSpacing: "-0.01em" }}>
+              Entrez dans le quotidien, en un coup d'œil.
+            </p>
+          </div>
+        </section>
+      </div>
+
       <section className="section problem-section" ref={problemRef}>
         <div className="problem-lines">
           <p className="problem-line accent">Les tâches s'accumulent.</p>
@@ -1307,7 +1309,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* FONCTIONNALITÉS */}
       <section className="section features-section" id="features" ref={featRef}>
         <div className="section-inner">
           <div className="reveal">
@@ -1335,7 +1336,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* COMMENT ÇA MARCHE */}
       <section className="section how-section" id="how" ref={howRef}>
         <div className="section-inner">
           <div className="reveal" style={{ textAlign: "center" }}>
@@ -1345,27 +1345,9 @@ export default function App() {
 
           <div className="steps-grid">
             {[
-              {
-                num: "01",
-                emoji: "👨‍👩‍👧",
-                bg: "linear-gradient(135deg, rgba(201,106,59,0.12), rgba(224,125,78,0.08))",
-                title: "Créez votre espace famille",
-                desc: "Invitez votre partenaire, ajoutez les enfants. En trois minutes, votre famille est connectée et prête à collaborer.",
-              },
-              {
-                num: "02",
-                emoji: "🧠",
-                bg: "linear-gradient(135deg, rgba(74,53,80,0.1), rgba(107,79,122,0.07))",
-                title: "L'IA apprend vos habitudes",
-                desc: "Plus vous utilisez l'app, plus l'assistant comprend votre rythme familial et personnalise ses suggestions.",
-              },
-              {
-                num: "03",
-                emoji: "✦",
-                bg: "linear-gradient(135deg, rgba(122,158,126,0.12), rgba(168,197,171,0.08))",
-                title: "Recevez des suggestions avant d'en avoir besoin",
-                desc: "L'assistant anticipe les tâches à venir, équilibre la charge entre les parents et vous laisse souffler.",
-              },
+              { num: "01", emoji: "👨‍👩‍👧", bg: "linear-gradient(135deg, rgba(201,106,59,0.12), rgba(224,125,78,0.08))", title: "Créez votre espace famille", desc: "Invitez votre partenaire, ajoutez les enfants. En trois minutes, votre famille est connectée et prête à collaborer." },
+              { num: "02", emoji: "🧠", bg: "linear-gradient(135deg, rgba(74,53,80,0.1), rgba(107,79,122,0.07))", title: "L'IA apprend vos habitudes", desc: "Plus vous utilisez l'app, plus l'assistant comprend votre rythme familial et personnalise ses suggestions." },
+              { num: "03", emoji: "✦", bg: "linear-gradient(135deg, rgba(122,158,126,0.12), rgba(168,197,171,0.08))", title: "Recevez des suggestions avant d'en avoir besoin", desc: "L'assistant anticipe les tâches à venir, équilibre la charge entre les parents et vous laisse souffler." },
             ].map((s, i) => (
               <div key={i} className={`step-card reveal reveal-delay-${i + 1}`}>
                 <div className="step-icon-wrap" style={{ background: s.bg }}>
@@ -1382,7 +1364,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* RÉASSURANCE */}
       <section className="section reassurance-section" ref={reassRef}>
         <div className="section-inner">
           <div className="reveal" style={{ textAlign: "center" }}>
@@ -1392,26 +1373,10 @@ export default function App() {
 
           <div className="pillars-grid">
             {[
-              {
-                icon: "⚖️",
-                title: "Équité entre les parents",
-                desc: "Notre Famille rend visible qui fait quoi. Pas pour pointer du doigt — pour rééquilibrer naturellement.",
-              },
-              {
-                icon: "🔒",
-                title: "Données strictement privées",
-                desc: "Chiffrées, stockées en Europe, jamais revendues. Vos informations familiales restent chez vous.",
-              },
-              {
-                icon: "📱",
-                title: "Mobile avant tout",
-                desc: "Conçu pour être utilisé en deux secondes, n'importe où. Entre deux réunions, en attendant le bus.",
-              },
-              {
-                icon: "✦",
-                title: "Une IA vraiment utile",
-                desc: "Pas un gadget. Un assistant qui apprend votre famille et anticipe ses besoins réels — sans jamais être intrusif.",
-              },
+              { icon: "⚖️", title: "Équité entre les parents", desc: "Notre Famille rend visible qui fait quoi. Pas pour pointer du doigt — pour rééquilibrer naturellement." },
+              { icon: "🔒", title: "Données strictement privées", desc: "Chiffrées, stockées en Europe, jamais revendues. Vos informations familiales restent chez vous." },
+              { icon: "📱", title: "Mobile avant tout", desc: "Conçu pour être utilisé en deux secondes, n'importe où. Entre deux réunions, en attendant le bus." },
+              { icon: "✦", title: "Une IA vraiment utile", desc: "Pas un gadget. Un assistant qui apprend votre famille et anticipe ses besoins réels — sans jamais être intrusif." },
             ].map((p, i) => (
               <div key={i} className={`pillar-card reveal reveal-delay-${i + 1}`}>
                 <span className="pillar-icon">{p.icon}</span>
@@ -1423,7 +1388,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* TÉMOIGNAGES */}
       <section className="section testimonials-section" id="testimonials" ref={testimRef}>
         <div className="section-inner">
           <div className="reveal" style={{ textAlign: "center" }}>
@@ -1433,38 +1397,15 @@ export default function App() {
 
           <div className="testimonials-grid">
             {[
-              {
-                stars: "★★★★★",
-                quote: "Avant, j'avais l'impression d'être la seule à voir toute la logistique. Depuis qu'on utilise Notre Famille, Thomas voit enfin tout ce qui tourne en arrière-plan. Ça a changé quelque chose de fondamental entre nous.",
-                name: "Sarah",
-                role: "Maman de 2 enfants, Lyon",
-                emoji: "👩",
-                bg: "linear-gradient(135deg, #fde8dc, #f5d5c4)",
-              },
-              {
-                stars: "★★★★★",
-                quote: "Je suis parent solo depuis deux ans. L'assistant IA, c'est un peu comme avoir quelqu'un qui pense avec moi. Il me rappelle les choses avant qu'elles deviennent urgentes. C'est con, mais ça change tout.",
-                name: "Julien",
-                role: "Papa solo de 3 enfants, Bordeaux",
-                emoji: "👨",
-                bg: "linear-gradient(135deg, #e0ddf0, #d0cce8)",
-              },
-              {
-                stars: "★★★★☆",
-                quote: "Les missions pour les enfants, c'est brillant. Mes deux filles adorent cocher leurs défis. Et moi j'ai moins à courir derrière elles pour les petites tâches du quotidien. Double bénéfice.",
-                name: "Amina",
-                role: "Maman de 2 filles, Paris",
-                emoji: "👩",
-                bg: "linear-gradient(135deg, #ddf0de, #cce8ce)",
-              },
+              { stars: "★★★★★", quote: "Avant, j'avais l'impression d'être la seule à voir toute la logistique. Depuis qu'on utilise Notre Famille, Thomas voit enfin tout ce qui tourne en arrière-plan. Ça a changé quelque chose de fondamental entre nous.", name: "Sarah", role: "Maman de 2 enfants, Lyon", emoji: "👩", bg: "linear-gradient(135deg, #fde8dc, #f5d5c4)" },
+              { stars: "★★★★★", quote: "Je suis parent solo depuis deux ans. L'assistant IA, c'est un peu comme avoir quelqu'un qui pense avec moi. Il me rappelle les choses avant qu'elles deviennent urgentes.", name: "Julien", role: "Papa solo de 3 enfants, Bordeaux", emoji: "👨", bg: "linear-gradient(135deg, #e0ddf0, #d0cce8)" },
+              { stars: "★★★★☆", quote: "Les missions pour les enfants, c'est brillant. Mes deux filles adorent cocher leurs défis. Et moi j'ai moins à courir derrière elles pour les petites tâches du quotidien.", name: "Amina", role: "Maman de 2 filles, Paris", emoji: "👩", bg: "linear-gradient(135deg, #ddf0de, #cce8ce)" },
             ].map((t, i) => (
               <div key={i} className={`testimonial-card reveal reveal-delay-${i + 1}`}>
                 <div className="testimonial-stars">{t.stars}</div>
                 <p className="testimonial-quote">"{t.quote}"</p>
                 <div className="testimonial-author">
-                  <div className="testimonial-avatar" style={{ background: t.bg }}>
-                    {t.emoji}
-                  </div>
+                  <div className="testimonial-avatar" style={{ background: t.bg }}>{t.emoji}</div>
                   <div>
                     <div className="testimonial-name">{t.name}</div>
                     <div className="testimonial-role">{t.role}</div>
@@ -1476,7 +1417,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* FAQ */}
       <section className="section faq-section" ref={faqRef}>
         <div className="section-inner">
           <div className="reveal" style={{ textAlign: "center" }}>
@@ -1487,11 +1427,7 @@ export default function App() {
           <div className="faq-list reveal">
             {faqs.map((item, i) => (
               <div key={i} className="faq-item">
-                <button
-                  className="faq-question"
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  aria-expanded={openFaq === i}
-                >
+                <button className="faq-question" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i}>
                   <span>{item.q}</span>
                   <span className={`faq-chevron${openFaq === i ? " open" : ""}`}>▾</span>
                 </button>
@@ -1504,7 +1440,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* CTA FINAL */}
       <section className="cta-final" id="cta">
         <div style={{ position: "relative", zIndex: 1 }}>
           <div className="cta-final-tag">Rejoignez les premières familles</div>
@@ -1515,7 +1450,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="footer">
         <div className="footer-inner">
           <div className="footer-logo">Notre<span>Famille</span></div>
@@ -1525,7 +1459,7 @@ export default function App() {
             <a href="#">Conditions d'utilisation</a>
             <a href="#">Contact</a>
           </div>
-          <div className="footer-copy">© 2025 Notre Famille</div>
+          <div className="footer-copy">© 2026 Notre Famille</div>
         </div>
       </footer>
     </>
