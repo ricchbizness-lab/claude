@@ -1,29 +1,16 @@
 import React, { useState } from "react";
 
 const T = {
-  bg: "#F7F2F7",
-  card: "#FFFFFF",
-  ink: "#352B3D",
-  muted: "#8F8497",
-  line: "#EFE6EF",
-  primary: "#8E6FB0",
-  primarySoft: "#F0E8F7",
-  mom: "#E07A9B",
-  momSoft: "#FBE9F0",
-  dad: "#5C9BC2",
-  dadSoft: "#E4F0F7",
-  accent: "#F2A65A",
-  green: "#5DAE8B",
-  red: "#D9697A",
+  bg: "#F7F2F7", card: "#FFFFFF", ink: "#352B3D", muted: "#8F8497", line: "#EFE6EF",
+  primary: "#8E6FB0", primarySoft: "#F0E8F7",
+  mom: "#E07A9B", momSoft: "#FBE9F0",
+  dad: "#5C9BC2", dadSoft: "#E4F0F7",
+  accent: "#F2A65A", green: "#5DAE8B", red: "#D9697A",
 };
 
 const CATEGORIES = [
-  { id: "Courses", emoji: "🛒" },
-  { id: "Enfants", emoji: "👶" },
-  { id: "Maison", emoji: "🏠" },
-  { id: "Admin", emoji: "📄" },
-  { id: "Santé", emoji: "🩺" },
-  { id: "Loisirs", emoji: "🎉" },
+  { id: "Courses", emoji: "🛒" }, { id: "Enfants", emoji: "👶" }, { id: "Maison", emoji: "🏠" },
+  { id: "Admin", emoji: "📄" }, { id: "Santé", emoji: "🩺" }, { id: "Loisirs", emoji: "🎉" },
 ];
 const catEmoji = (c) => (CATEGORIES.find((x) => x.id === c) || {}).emoji || "📌";
 
@@ -32,16 +19,13 @@ const PRIORITIES = {
   moyenne: { label: "Moyenne", color: T.accent, bg: "#FCF1E3" },
   basse: { label: "Basse", color: T.green, bg: "#E7F3EE" },
 };
-
 const STRESS = {
-  1: { e: "😌", t: "Zen" },
-  2: { e: "🙂", t: "Ça va" },
-  3: { e: "😐", t: "Moyen" },
-  4: { e: "😟", t: "Tendu" },
-  5: { e: "😫", t: "Épuisé·e" },
+  1: { e: "😌", t: "Zen" }, 2: { e: "🙂", t: "Ça va" }, 3: { e: "😐", t: "Moyen" },
+  4: { e: "😟", t: "Tendu" }, 5: { e: "😫", t: "Épuisé·e" },
 };
-
 const PARENTS = { mom: { name: "Maman", color: T.mom, soft: T.momSoft }, dad: { name: "Papa", color: T.dad, soft: T.dadSoft } };
+const MISSION_EMOJIS = ["⭐", "🍽️", "🗑️", "🧹", "👨‍🍳", "🍳", "📚", "🐶", "🌱", "🧺"];
+const CONTACT_EMOJIS = ["📇", "👨‍⚕️", "👩", "🔧", "🏫", "🚒", "🚓", "💊", "🧑‍🏫"];
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
@@ -54,19 +38,14 @@ async function callAI(system, prompt) {
       "anthropic-dangerous-direct-browser-access": "true",
       "content-type": "application/json",
     },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 800,
-      system,
-      messages: [{ role: "user", content: prompt }],
-    }),
+    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 800, system, messages: [{ role: "user", content: prompt }] }),
   });
   if (!res.ok) throw new Error("La requête a échoué (" + res.status + ").");
   const data = await res.json();
   return (data.content && data.content[0] && data.content[0].text) || "Réponse vide.";
 }
-const AI_SYSTEM =
-  "Tu es un assistant familial bienveillant. Tu aides les familles à mieux s'organiser avec des conseils pratiques et modernes. Tu prônes l'équité entre les deux parents. Réponds toujours en français, de façon concise et actionnable.";
+
+const AI_SYSTEM = "Tu es un assistant familial bienveillant. Tu aides les familles à mieux s'organiser avec des conseils pratiques et modernes. Tu prônes l'équité entre les deux parents. Réponds toujours en français, de façon concise et actionnable.";
 
 function Bar({ value, color, h = 8 }) {
   return (
@@ -75,13 +54,8 @@ function Bar({ value, color, h = 8 }) {
     </div>
   );
 }
-
 function Badge({ children, color = T.muted, bg = T.line }) {
-  return (
-    <span style={{ fontSize: 11, fontWeight: 700, color, background: bg, padding: "3px 8px", borderRadius: 99, whiteSpace: "nowrap" }}>
-      {children}
-    </span>
-  );
+  return <span style={{ fontSize: 11, fontWeight: 700, color, background: bg, padding: "3px 8px", borderRadius: 99, whiteSpace: "nowrap" }}>{children}</span>;
 }
 
 const styles = {
@@ -90,10 +64,7 @@ const styles = {
   btn: { border: "none", borderRadius: 14, padding: "14px 16px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" },
   card: { background: T.card, borderRadius: 20, padding: 16, boxShadow: "0 4px 18px rgba(120,90,140,.06)" },
   iconBtn: { border: "none", background: "transparent", cursor: "pointer", fontSize: 17, padding: 6, borderRadius: 10, lineHeight: 1 },
-  chip: (active, color) => ({
-    border: "none", cursor: "pointer", fontFamily: "inherit", padding: "8px 14px", borderRadius: 99, fontSize: 13, fontWeight: 700,
-    background: active ? color : "#fff", color: active ? "#fff" : T.muted, boxShadow: active ? "none" : "0 1px 6px rgba(120,90,140,.08)", whiteSpace: "nowrap",
-  }),
+  chip: (active, color) => ({ border: "none", cursor: "pointer", fontFamily: "inherit", padding: "8px 14px", borderRadius: 99, fontSize: 13, fontWeight: 700, background: active ? color : "#fff", color: active ? "#fff" : T.muted, boxShadow: active ? "none" : "0 1px 6px rgba(120,90,140,.08)", whiteSpace: "nowrap" }),
 };
 
 function Sheet({ title, onClose, children }) {
@@ -112,25 +83,34 @@ function Sheet({ title, onClose, children }) {
     </div>
   );
 }
-
 function Field({ label, children }) {
+  return <div style={{ marginBottom: 14 }}><label style={styles.label}>{label}</label>{children}</div>;
+}
+function SaveBtn({ onClick, disabled, label = "Enregistrer" }) {
   return (
-    <div style={{ marginBottom: 14 }}>
-      <label style={styles.label}>{label}</label>
-      {children}
+    <button onClick={onClick} disabled={disabled} style={{ ...styles.btn, width: "100%", background: disabled ? T.line : T.primary, color: disabled ? T.muted : "#fff", marginTop: 6, cursor: disabled ? "not-allowed" : "pointer" }}>
+      {label}
+    </button>
+  );
+}
+function AddAmount({ onAdd }) {
+  const [v, setV] = useState("");
+  return (
+    <div style={{ display: "flex", gap: 6 }}>
+      <input type="number" value={v} onChange={(e) => setV(e.target.value)} placeholder="+€" style={{ width: 64, padding: "6px 8px", borderRadius: 10, border: "1px solid " + T.line, fontSize: 13, outline: "none" }} />
+      <button onClick={() => { const n = parseFloat(v); if (n > 0) { onAdd(n); setV(""); } }} style={{ border: "none", background: T.green, color: "#fff", borderRadius: 10, padding: "6px 12px", fontWeight: 700, cursor: "pointer", fontSize: 13 }}>OK</button>
     </div>
   );
 }
 
 export default function App() {
   const [tab, setTab] = useState("home");
-  const [sheet, setSheet] = useState(null); // {type, data}
+  const [sheet, setSheet] = useState(null);
   const [draft, setDraft] = useState({});
   const [taskFa, setTaskFa] = useState("all");
   const [taskFc, setTaskFc] = useState("all");
   const [kidSub, setKidSub] = useState("fiches");
   const [budSub, setBudSub] = useState("depenses");
-
   const [stress, setStress] = useState({ mom: 3, dad: 2 });
   const [thanks, setThanks] = useState({ mom: "Merci pour le dîner d'hier, c'était parfait 💛", dad: "Merci de gérer les rendez-vous médicaux 🙏" });
 
@@ -142,7 +122,6 @@ export default function App() {
     { id: uid(), title: "Préparer goûter d'anniv", assignee: "mom", category: "Enfants", priority: "basse", date: "2026-06-20", done: false },
     { id: uid(), title: "Réserver resto samedi", assignee: "dad", category: "Loisirs", priority: "basse", date: "2026-06-19", done: true },
   ]);
-
   const [events, setEvents] = useState([
     { id: uid(), title: "Réunion parents d'élèves", date: "2026-06-17" },
     { id: uid(), title: "Pédiatre — Léa", date: "2026-06-18" },
@@ -150,47 +129,51 @@ export default function App() {
     { id: uid(), title: "Dîner en amoureux", date: "2026-06-21" },
     { id: uid(), title: "Sortie piscine", date: "2026-06-24" },
   ]);
-
   const [kids, setKids] = useState([
     { id: uid(), name: "Léa", age: "7 ans", allergies: "Arachides", doctor: "Dr. Moreau", notes: "Adore dessiner, peur du noir", vaccins: "À jour" },
     { id: uid(), name: "Tom", age: "4 ans", allergies: "Aucune", doctor: "Dr. Moreau", notes: "Sieste 13h-15h", vaccins: "Rappel ROR à prévoir" },
   ]);
-
+  // Missions now carry a childId + per-child reward goal lives on the child record
   const [missions, setMissions] = useState([
-    { id: uid(), title: "Ranger sa chambre", points: 10, done: true },
-    { id: uid(), title: "Mettre la table", points: 5, done: false },
-    { id: uid(), title: "Lire 10 minutes", points: 8, done: true },
-    { id: uid(), title: "Arroser les plantes", points: 5, done: false },
+    { id: uid(), childId: null, title: "Ranger sa chambre", points: 10, done: true, emoji: "🧹" },
+    { id: uid(), childId: null, title: "Mettre la table", points: 5, done: false, emoji: "🍽️" },
+    { id: uid(), childId: null, title: "Lire 10 minutes", points: 8, done: true, emoji: "📚" },
+    { id: uid(), childId: null, title: "Arroser les plantes", points: 5, done: false, emoji: "🌱" },
   ]);
-  const [reward, setReward] = useState({ label: "Sortie au parc 🎠", goal: 40 });
-
+  const [rewards, setRewards] = useState({}); // { [childId]: goalPoints }
   const [contacts, setContacts] = useState([
-    { id: uid(), name: "Dr. Moreau", role: "Pédiatre", phone: "0145678910" },
-    { id: uid(), name: "Sophie", role: "Baby-sitter", phone: "0612345678" },
-    { id: uid(), name: "École des Lilas", role: "École", phone: "0148901234" },
-    { id: uid(), name: "Mamie Claire", role: "Grand-mère", phone: "0698765432" },
+    { id: uid(), name: "Dr. Moreau", role: "Pédiatre", phone: "0145678910", emoji: "👨‍⚕️" },
+    { id: uid(), name: "Sophie", role: "Baby-sitter", phone: "0612345678", emoji: "👩" },
+    { id: uid(), name: "École des Lilas", role: "École", phone: "0148901234", emoji: "🏫" },
+    { id: uid(), name: "Mamie Claire", role: "Grand-mère", phone: "0698765432", emoji: "📇" },
   ]);
-
   const [dateIdea, setDateIdea] = useState("Cinéma + restaurant italien samedi soir 🍝");
-
   const [expenses, setExpenses] = useState([
     { id: uid(), label: "Courses Carrefour", amount: 87.5, category: "Courses", payer: "mom" },
     { id: uid(), label: "Essence", amount: 60, category: "Loisirs", payer: "dad" },
     { id: uid(), label: "Pharmacie", amount: 24.3, category: "Santé", payer: "mom" },
     { id: uid(), label: "Cantine Léa", amount: 45, category: "Enfants", payer: "dad" },
   ]);
-
   const [savings, setSavings] = useState([
     { id: uid(), title: "Vacances été ☀️", goal: 2000, current: 750 },
     { id: uid(), title: "Vélo de Tom 🚲", goal: 200, current: 120 },
   ]);
 
-  // ---- AI sheet state ----
   const [aiMode, setAiMode] = useState("anticiper");
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
   const [aiResult, setAiResult] = useState("");
   const [aiQuestion, setAiQuestion] = useState("");
+
+  // assign default rewards once kids are known
+  if (kids.length && Object.keys(rewards).length === 0) {
+    const init = {}; kids.forEach((k) => (init[k.id] = 40));
+    setRewards(init);
+  }
+  // assign existing missions without a child to the first child once (migration safety)
+  if (kids.length && missions.some((m) => !m.childId)) {
+    setMissions((ms) => ms.map((m, i) => (m.childId ? m : { ...m, childId: kids[i % kids.length].id })));
+  }
 
   const open = (type, data = {}) => { setDraft(data); setSheet({ type }); };
   const close = () => setSheet(null);
@@ -205,7 +188,6 @@ export default function App() {
   const futureEvents = upcoming.filter((e) => e.date >= "2026-06-16");
   const fmtDate = (d) => new Date(d + "T00:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 
-  // ---------- AI actions ----------
   const runAI = async (prompt) => {
     setAiError(""); setAiResult(""); setAiLoading(true);
     try { setAiResult(await callAI(AI_SYSTEM, prompt)); }
@@ -218,6 +200,7 @@ export default function App() {
 - Charge ${PARENTS.mom.name} : ${load("mom").done}/${load("mom").total} tâches faites. Stress : ${stress.mom}/5 (${STRESS[stress.mom].t}).
 - Charge ${PARENTS.dad.name} : ${load("dad").done}/${load("dad").total} tâches faites. Stress : ${stress.dad}/5 (${STRESS[stress.dad].t}).
 - Événements à venir : ${futureEvents.map((e) => e.title + " (" + fmtDate(e.date) + ")").join(", ") || "aucun"}.
+
 Donne, de façon structurée et concise :
 1) Les besoins à anticiper cette semaine
 2) Un risque de tension à surveiller
@@ -226,7 +209,6 @@ Donne, de façon structurée et concise :
     runAI(ctx);
   };
 
-  // ---------- RENDER HELPERS ----------
   const Header = () => (
     <div style={{ position: "sticky", top: 0, zIndex: 20, background: "rgba(247,242,247,.92)", backdropFilter: "blur(8px)", padding: "16px 18px 10px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid " + T.line }}>
       <div>
@@ -240,7 +222,6 @@ Donne, de façon structurée et concise :
     </div>
   );
 
-  // ============ TABS ============
   const Home = () => (
     <div style={{ display: "grid", gap: 14 }}>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -264,8 +245,7 @@ Donne, de façon structurée et concise :
               <span style={{ fontWeight: 700, color: PARENTS[p].color, fontSize: 14 }}>{PARENTS[p].name}</span>
               <span style={{ fontSize: 22 }}>{STRESS[stress[p]].e} <span style={{ fontSize: 13, color: T.muted, fontWeight: 700 }}>{STRESS[stress[p]].t}</span></span>
             </div>
-            <input type="range" min="1" max="5" value={stress[p]} onChange={(e) => setStress({ ...stress, [p]: +e.target.value })}
-              style={{ width: "100%", accentColor: PARENTS[p].color }} />
+            <input type="range" min="1" max="5" value={stress[p]} onChange={(e) => setStress({ ...stress, [p]: +e.target.value })} style={{ width: "100%", accentColor: PARENTS[p].color }} />
           </div>
         ))}
       </div>
@@ -284,8 +264,7 @@ Donne, de façon structurée et concise :
         {["mom", "dad"].map((p) => (
           <div key={p} style={{ marginBottom: p === "mom" ? 12 : 0 }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: PARENTS[p].color, marginBottom: 4 }}>{PARENTS[p].name} dit :</div>
-            <textarea value={thanks[p]} onChange={(e) => setThanks({ ...thanks, [p]: e.target.value })} rows={2}
-              style={{ ...styles.input, background: PARENTS[p].soft, resize: "none" }} />
+            <textarea value={thanks[p]} onChange={(e) => setThanks({ ...thanks, [p]: e.target.value })} rows={2} style={{ ...styles.input, background: PARENTS[p].soft, resize: "none" }} />
           </div>
         ))}
       </div>
@@ -356,7 +335,6 @@ Donne, de façon structurée et concise :
 
   const Kids = () => {
     const sub = kidSub, setSub = setKidSub;
-    const points = missions.filter((m) => m.done).reduce((s, m) => s + m.points, 0);
     return (
       <div style={{ display: "grid", gap: 12 }}>
         <div style={{ display: "flex", gap: 8, background: "#fff", padding: 5, borderRadius: 14, boxShadow: "0 2px 10px rgba(120,90,140,.06)" }}>
@@ -365,61 +343,77 @@ Donne, de façon structurée et concise :
           ))}
         </div>
 
-        {sub === "fiches" && kids.map((k) => (
-          <div key={k.id} style={styles.card}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-              <div style={{ fontSize: 18, fontWeight: 800, color: T.ink }}>👧 {k.name} <span style={{ fontSize: 13, color: T.muted, fontWeight: 600 }}>· {k.age}</span></div>
-              <button style={styles.iconBtn} onClick={() => open("kid", k)}>✏️</button>
-            </div>
-            {[["Allergies", k.allergies], ["Médecin", k.doctor], ["Vaccins", k.vaccins], ["Notes", k.notes]].map(([l, v]) => (
-              <div key={l} style={{ display: "flex", gap: 8, padding: "6px 0", borderBottom: "1px solid " + T.line, fontSize: 14 }}>
-                <span style={{ color: T.muted, fontWeight: 700, minWidth: 80 }}>{l}</span>
-                <span style={{ color: T.ink }}>{v || "—"}</span>
-              </div>
-            ))}
-          </div>
-        ))}
-
-        {sub === "missions" && (
-          <>
-            <div style={styles.card}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                <span style={{ fontWeight: 800, color: T.ink }}>🎁 {reward.label}</span>
-                <span style={{ fontWeight: 800, color: T.accent }}>{points}/{reward.goal} pts</span>
-              </div>
-              <Bar value={(points / reward.goal) * 100} color={T.accent} h={10} />
-            </div>
-            {missions.map((m) => (
-              <div key={m.id} style={{ ...styles.card, padding: 14, display: "flex", alignItems: "center", gap: 12 }}>
-                <button onClick={() => setMissions(missions.map((x) => x.id === m.id ? { ...x, done: !x.done } : x))}
-                  style={{ width: 26, height: 26, borderRadius: 9, border: "2px solid " + (m.done ? T.green : T.line), background: m.done ? T.green : "#fff", color: "#fff", cursor: "pointer", flexShrink: 0 }}>{m.done ? "✓" : ""}</button>
-                <div style={{ flex: 1, fontWeight: 700, color: T.ink, textDecoration: m.done ? "line-through" : "none", opacity: m.done ? .6 : 1 }}>{m.title}</div>
-                <Badge color={T.accent} bg="#FCF1E3">+{m.points} pts</Badge>
-                <button style={styles.iconBtn} onClick={() => open("mission", m)}>✏️</button>
-                <button style={{ ...styles.iconBtn, color: T.red }} onClick={() => setMissions(missions.filter((x) => x.id !== m.id))}>✕</button>
-              </div>
-            ))}
-            <button onClick={() => open("mission", { title: "", points: 5, done: false })} style={{ ...styles.btn, background: T.primarySoft, color: T.primary }}>+ Ajouter une mission</button>
-          </>
-        )}
-
-        {sub === "contacts" && (
-          <>
-            {contacts.map((c) => (
-              <div key={c.id} style={{ ...styles.card, padding: 14, display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 44, height: 44, borderRadius: 14, background: T.primarySoft, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>📇</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, color: T.ink }}>{c.name}</div>
-                  <div style={{ fontSize: 12, color: T.muted }}>{c.role}</div>
-                  <a href={"tel:" + c.phone} style={{ fontSize: 13, color: T.primary, fontWeight: 700, textDecoration: "none" }}>📞 {c.phone}</a>
+        {sub === "fiches" && <>
+          {kids.map((k) => (
+            <div key={k.id} style={styles.card}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <div style={{ fontSize: 18, fontWeight: 800, color: T.ink }}>👧 {k.name} <span style={{ fontSize: 13, color: T.muted, fontWeight: 600 }}>· {k.age}</span></div>
+                <div>
+                  <button style={styles.iconBtn} onClick={() => open("kid", k)}>✏️</button>
+                  <button style={{ ...styles.iconBtn, color: T.red }} onClick={() => {
+                    setKids(kids.filter((x) => x.id !== k.id));
+                    setMissions(missions.filter((m) => m.childId !== k.id));
+                  }}>✕</button>
                 </div>
-                <button style={styles.iconBtn} onClick={() => open("contact", c)}>✏️</button>
-                <button style={{ ...styles.iconBtn, color: T.red }} onClick={() => setContacts(contacts.filter((x) => x.id !== c.id))}>✕</button>
               </div>
-            ))}
-            <button onClick={() => open("contact", { name: "", role: "", phone: "" })} style={{ ...styles.btn, background: T.primarySoft, color: T.primary }}>+ Ajouter un contact</button>
-          </>
-        )}
+              {[["Allergies", k.allergies], ["Médecin", k.doctor], ["Vaccins", k.vaccins], ["Notes", k.notes]].map(([l, v]) => (
+                <div key={l} style={{ display: "flex", gap: 8, padding: "6px 0", borderBottom: "1px solid " + T.line, fontSize: 14 }}>
+                  <span style={{ color: T.muted, fontWeight: 700, minWidth: 80 }}>{l}</span>
+                  <span style={{ color: T.ink }}>{v || "—"}</span>
+                </div>
+              ))}
+            </div>
+          ))}
+          <button onClick={() => open("kid", { name: "", age: "", allergies: "", doctor: "", vaccins: "", notes: "" })} style={{ ...styles.btn, background: T.primarySoft, color: T.primary }}>+ Ajouter un enfant</button>
+        </>}
+
+        {sub === "missions" && <>
+          {kids.map((k) => {
+            const my = missions.filter((m) => m.childId === k.id);
+            const points = my.filter((m) => m.done).reduce((s, m) => s + m.points, 0);
+            const goal = rewards[k.id] || 40;
+            return (
+              <div key={k.id} style={{ display: "grid", gap: 10 }}>
+                <div style={styles.card}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                    <span style={{ fontWeight: 800, color: T.ink }}>👧 {k.name}</span>
+                    <button style={styles.iconBtn} onClick={() => open("reward", { childId: k.id, goal })}>🎁 {points}/{goal} pts</button>
+                  </div>
+                  <Bar value={(points / goal) * 100} color={T.accent} h={10} />
+                </div>
+                {my.map((m) => (
+                  <div key={m.id} style={{ ...styles.card, padding: 14, display: "flex", alignItems: "center", gap: 12 }}>
+                    <button onClick={() => setMissions(missions.map((x) => x.id === m.id ? { ...x, done: !x.done } : x))}
+                      style={{ width: 26, height: 26, borderRadius: 9, border: "2px solid " + (m.done ? T.green : T.line), background: m.done ? T.green : "#fff", color: "#fff", cursor: "pointer", flexShrink: 0 }}>{m.done ? "✓" : ""}</button>
+                    <span style={{ fontSize: 18 }}>{m.emoji}</span>
+                    <div style={{ flex: 1, fontWeight: 700, color: T.ink, textDecoration: m.done ? "line-through" : "none", opacity: m.done ? .6 : 1 }}>{m.title}</div>
+                    <Badge color={T.accent} bg="#FCF1E3">+{m.points} pts</Badge>
+                    <button style={styles.iconBtn} onClick={() => open("mission", m)}>✏️</button>
+                    <button style={{ ...styles.iconBtn, color: T.red }} onClick={() => setMissions(missions.filter((x) => x.id !== m.id))}>✕</button>
+                  </div>
+                ))}
+                <button onClick={() => open("mission", { childId: k.id, title: "", points: 5, done: false, emoji: "⭐" })} style={{ ...styles.btn, background: T.primarySoft, color: T.primary, fontSize: 13 }}>+ Mission pour {k.name}</button>
+              </div>
+            );
+          })}
+          {kids.length === 0 && <div style={{ ...styles.card, textAlign: "center", color: T.muted }}>Ajoute d'abord un enfant dans Fiches.</div>}
+        </>}
+
+        {sub === "contacts" && <>
+          {contacts.map((c) => (
+            <div key={c.id} style={{ ...styles.card, padding: 14, display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 14, background: T.primarySoft, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{c.emoji || "📇"}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 700, color: T.ink }}>{c.name}</div>
+                <div style={{ fontSize: 12, color: T.muted }}>{c.role}</div>
+                <a href={"tel:" + c.phone} style={{ fontSize: 13, color: T.primary, fontWeight: 700, textDecoration: "none" }}>📞 {c.phone}</a>
+              </div>
+              <button style={styles.iconBtn} onClick={() => open("contact", c)}>✏️</button>
+              <button style={{ ...styles.iconBtn, color: T.red }} onClick={() => setContacts(contacts.filter((x) => x.id !== c.id))}>✕</button>
+            </div>
+          ))}
+          <button onClick={() => open("contact", { name: "", role: "", phone: "", emoji: "📇" })} style={{ ...styles.btn, background: T.primarySoft, color: T.primary }}>+ Ajouter un contact</button>
+        </>}
       </div>
     );
   };
@@ -440,8 +434,7 @@ Donne, de façon structurée et concise :
         {["mom", "dad"].map((p) => (
           <div key={p} style={{ background: PARENTS[p].soft, borderRadius: 14, padding: 14, marginBottom: p === "mom" ? 10 : 0 }}>
             <div style={{ fontSize: 12, fontWeight: 800, color: PARENTS[p].color, marginBottom: 6 }}>{PARENTS[p].name}</div>
-            <textarea value={thanks[p]} onChange={(e) => setThanks({ ...thanks, [p]: e.target.value })} rows={2}
-              style={{ ...styles.input, background: "#fff", resize: "none" }} />
+            <textarea value={thanks[p]} onChange={(e) => setThanks({ ...thanks, [p]: e.target.value })} rows={2} style={{ ...styles.input, background: "#fff", resize: "none" }} />
           </div>
         ))}
       </div>
@@ -466,63 +459,60 @@ Donne, de façon structurée et concise :
           ))}
         </div>
 
-        {sub === "depenses" && (
-          <>
-            <div style={{ ...styles.card, background: "linear-gradient(135deg,#8E6FB0,#B98BD9)", color: "#fff" }}>
-              <div style={{ fontSize: 12, opacity: .9 }}>Total dépenses</div>
-              <div style={{ fontSize: 30, fontWeight: 800 }}>{total.toFixed(2)} €</div>
-              <div style={{ display: "flex", gap: 16, marginTop: 6, fontSize: 13 }}>
-                <span>👩 Maman {byPayer.mom.toFixed(0)} €</span>
-                <span>👨 Papa {byPayer.dad.toFixed(0)} €</span>
-              </div>
+        {sub === "depenses" && <>
+          <div style={{ ...styles.card, background: "linear-gradient(135deg,#8E6FB0,#B98BD9)", color: "#fff" }}>
+            <div style={{ fontSize: 12, opacity: .9 }}>Total dépenses</div>
+            <div style={{ fontSize: 30, fontWeight: 800 }}>{total.toFixed(2)} €</div>
+            <div style={{ display: "flex", gap: 16, marginTop: 6, fontSize: 13 }}>
+              <span>👩 Maman {byPayer.mom.toFixed(0)} €</span>
+              <span>👨 Papa {byPayer.dad.toFixed(0)} €</span>
             </div>
-            <div style={styles.card}>
-              <div style={{ fontWeight: 800, color: T.ink, marginBottom: 8 }}>Par catégorie</div>
-              {Object.entries(byCat).map(([c, v]) => (
-                <div key={c} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontSize: 14 }}>
-                  <span style={{ color: T.muted }}>{catEmoji(c)} {c}</span><span style={{ fontWeight: 700, color: T.ink }}>{v.toFixed(2)} €</span>
-                </div>
-              ))}
-            </div>
-            {expenses.map((e) => (
-              <div key={e.id} style={{ ...styles.card, padding: 14, display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, color: T.ink }}>{e.label}</div>
-                  <div style={{ display: "flex", gap: 6, marginTop: 5 }}>
-                    <Badge>{catEmoji(e.category)} {e.category}</Badge>
-                    <Badge color={PARENTS[e.payer].color} bg={PARENTS[e.payer].soft}>{PARENTS[e.payer].name}</Badge>
-                  </div>
-                </div>
-                <div style={{ fontWeight: 800, color: T.ink }}>{e.amount.toFixed(2)} €</div>
-                <button style={styles.iconBtn} onClick={() => open("expense", e)}>✏️</button>
-                <button style={{ ...styles.iconBtn, color: T.red }} onClick={() => setExpenses(expenses.filter((x) => x.id !== e.id))}>✕</button>
+          </div>
+          <div style={styles.card}>
+            <div style={{ fontWeight: 800, color: T.ink, marginBottom: 8 }}>Par catégorie</div>
+            {Object.entries(byCat).map(([c, v]) => (
+              <div key={c} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontSize: 14 }}>
+                <span style={{ color: T.muted }}>{catEmoji(c)} {c}</span><span style={{ fontWeight: 700, color: T.ink }}>{v.toFixed(2)} €</span>
               </div>
             ))}
-            <button onClick={() => open("expense", { label: "", amount: "", category: "Courses", payer: "mom" })} style={{ ...styles.btn, background: T.primarySoft, color: T.primary }}>+ Ajouter une dépense</button>
-          </>
-        )}
+            {Object.keys(byCat).length === 0 && <div style={{ color: T.muted, fontSize: 13 }}>Aucune dépense enregistrée.</div>}
+          </div>
+          {expenses.map((e) => (
+            <div key={e.id} style={{ ...styles.card, padding: 14, display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 700, color: T.ink }}>{e.label}</div>
+                <div style={{ display: "flex", gap: 6, marginTop: 5 }}>
+                  <Badge>{catEmoji(e.category)} {e.category}</Badge>
+                  <Badge color={PARENTS[e.payer].color} bg={PARENTS[e.payer].soft}>{PARENTS[e.payer].name}</Badge>
+                </div>
+              </div>
+              <div style={{ fontWeight: 800, color: T.ink }}>{e.amount.toFixed(2)} €</div>
+              <button style={styles.iconBtn} onClick={() => open("expense", e)}>✏️</button>
+              <button style={{ ...styles.iconBtn, color: T.red }} onClick={() => setExpenses(expenses.filter((x) => x.id !== e.id))}>✕</button>
+            </div>
+          ))}
+          <button onClick={() => open("expense", { label: "", amount: "", category: "Courses", payer: "mom" })} style={{ ...styles.btn, background: T.primarySoft, color: T.primary }}>+ Ajouter une dépense</button>
+        </>}
 
-        {sub === "cagnottes" && (
-          <>
-            {savings.map((s) => (
-              <div key={s.id} style={styles.card}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                  <span style={{ fontWeight: 800, color: T.ink }}>{s.title}</span>
-                  <div>
-                    <button style={styles.iconBtn} onClick={() => open("saving", s)}>✏️</button>
-                    <button style={{ ...styles.iconBtn, color: T.red }} onClick={() => setSavings(savings.filter((x) => x.id !== s.id))}>✕</button>
-                  </div>
-                </div>
-                <Bar value={(s.current / s.goal) * 100} color={T.green} h={10} />
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
-                  <span style={{ fontSize: 13, color: T.muted, fontWeight: 700 }}>{s.current} € / {s.goal} €</span>
-                  <AddAmount onAdd={(v) => setSavings(savings.map((x) => x.id === s.id ? { ...x, current: x.current + v } : x))} />
+        {sub === "cagnottes" && <>
+          {savings.map((s) => (
+            <div key={s.id} style={styles.card}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <span style={{ fontWeight: 800, color: T.ink }}>{s.title}</span>
+                <div>
+                  <button style={styles.iconBtn} onClick={() => open("saving", s)}>✏️</button>
+                  <button style={{ ...styles.iconBtn, color: T.red }} onClick={() => setSavings(savings.filter((x) => x.id !== s.id))}>✕</button>
                 </div>
               </div>
-            ))}
-            <button onClick={() => open("saving", { title: "", goal: "", current: 0 })} style={{ ...styles.btn, background: T.primarySoft, color: T.primary }}>+ Nouvelle cagnotte</button>
-          </>
-        )}
+              <Bar value={(s.current / s.goal) * 100} color={T.green} h={10} />
+              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
+                <span style={{ fontSize: 13, color: T.muted, fontWeight: 700 }}>{s.current} € / {s.goal} €</span>
+                <AddAmount onAdd={(v) => setSavings(savings.map((x) => x.id === s.id ? { ...x, current: x.current + v } : x))} />
+              </div>
+            </div>
+          ))}
+          <button onClick={() => open("saving", { title: "", goal: "", current: 0 })} style={{ ...styles.btn, background: T.primarySoft, color: T.primary }}>+ Nouvelle cagnotte</button>
+        </>}
       </div>
     );
   };
@@ -530,13 +520,11 @@ Donne, de façon structurée et concise :
   const tabTitle = { home: "Accueil", tasks: "Tâches", kids: "Enfants", wellbeing: "Bien-être", budget: "Budget" };
   const tabs = [["home", "🏠"], ["tasks", "✅"], ["kids", "👶"], ["wellbeing", "💛"], ["budget", "💰"]];
 
-  // ---------- SHEET CONTENT ----------
   const saveDraft = (commit) => { commit(); close(); };
 
   function renderSheet() {
     if (!sheet) return null;
     const ty = sheet.type;
-
     if (ty === "ai") return <AISheet />;
 
     if (ty === "task") {
@@ -574,28 +562,54 @@ Donne, de façon structurée et concise :
       );
     }
 
-    if (ty === "kid") return (
-      <Sheet title={"Fiche de " + draft.name} onClose={close}>
-        <Field label="Prénom"><input style={styles.input} value={draft.name || ""} onChange={(e) => setDraft({ ...draft, name: e.target.value })} /></Field>
-        <Field label="Âge"><input style={styles.input} value={draft.age || ""} onChange={(e) => setDraft({ ...draft, age: e.target.value })} /></Field>
-        <Field label="Allergies"><input style={styles.input} value={draft.allergies || ""} onChange={(e) => setDraft({ ...draft, allergies: e.target.value })} /></Field>
-        <Field label="Médecin"><input style={styles.input} value={draft.doctor || ""} onChange={(e) => setDraft({ ...draft, doctor: e.target.value })} /></Field>
-        <Field label="Vaccins"><input style={styles.input} value={draft.vaccins || ""} onChange={(e) => setDraft({ ...draft, vaccins: e.target.value })} /></Field>
-        <Field label="Notes"><textarea rows={3} style={{ ...styles.input, resize: "none" }} value={draft.notes || ""} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} /></Field>
-        <SaveBtn onClick={() => saveDraft(() => setKids(kids.map((x) => x.id === draft.id ? draft : x)))} />
-      </Sheet>
-    );
+    if (ty === "kid") {
+      const isNew = !draft.id;
+      return (
+        <Sheet title={isNew ? "Nouvel enfant" : "Fiche de " + draft.name} onClose={close}>
+          <Field label="Prénom"><input style={styles.input} value={draft.name || ""} onChange={(e) => setDraft({ ...draft, name: e.target.value })} /></Field>
+          <Field label="Âge"><input style={styles.input} value={draft.age || ""} onChange={(e) => setDraft({ ...draft, age: e.target.value })} placeholder="Ex : 7 ans" /></Field>
+          <Field label="Allergies"><input style={styles.input} value={draft.allergies || ""} onChange={(e) => setDraft({ ...draft, allergies: e.target.value })} /></Field>
+          <Field label="Médecin"><input style={styles.input} value={draft.doctor || ""} onChange={(e) => setDraft({ ...draft, doctor: e.target.value })} /></Field>
+          <Field label="Vaccins"><input style={styles.input} value={draft.vaccins || ""} onChange={(e) => setDraft({ ...draft, vaccins: e.target.value })} /></Field>
+          <Field label="Notes"><textarea rows={3} style={{ ...styles.input, resize: "none" }} value={draft.notes || ""} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} /></Field>
+          <SaveBtn disabled={!draft.name} onClick={() => saveDraft(() => {
+            if (isNew) {
+              const id = uid();
+              setKids([...kids, { ...draft, id }]);
+              setRewards((r) => ({ ...r, [id]: 40 }));
+            } else setKids(kids.map((x) => x.id === draft.id ? draft : x));
+          })} />
+        </Sheet>
+      );
+    }
 
     if (ty === "mission") {
       const isNew = !draft.id;
+      const child = kids.find((k) => k.id === draft.childId);
       return (
-        <Sheet title={isNew ? "Nouvelle mission" : "Modifier la mission"} onClose={close}>
+        <Sheet title={isNew ? "Nouvelle mission" + (child ? " — " + child.name : "") : "Modifier la mission"} onClose={close}>
           <Field label="Mission"><input style={styles.input} value={draft.title || ""} onChange={(e) => setDraft({ ...draft, title: e.target.value })} placeholder="Ex : Faire son lit" /></Field>
           <Field label="Points"><input type="number" style={styles.input} value={draft.points} onChange={(e) => setDraft({ ...draft, points: +e.target.value })} /></Field>
+          <Field label="Emoji">
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {MISSION_EMOJIS.map((em) => (
+                <button key={em} onClick={() => setDraft({ ...draft, emoji: em })} style={{ width: 40, height: 40, borderRadius: 12, border: "2px solid " + (draft.emoji === em ? T.primary : T.line), background: draft.emoji === em ? T.primarySoft : "#fff", fontSize: 18, cursor: "pointer" }}>{em}</button>
+              ))}
+            </div>
+          </Field>
           <SaveBtn disabled={!draft.title} onClick={() => saveDraft(() => {
-            if (isNew) setMissions([...missions, { ...draft, id: uid(), points: draft.points || 5 }]);
+            if (isNew) setMissions([...missions, { ...draft, id: uid(), points: draft.points || 5, done: false, emoji: draft.emoji || "⭐" }]);
             else setMissions(missions.map((x) => x.id === draft.id ? draft : x));
           })} />
+        </Sheet>
+      );
+    }
+
+    if (ty === "reward") {
+      return (
+        <Sheet title="Objectif de récompense" onClose={close}>
+          <Field label="Points à atteindre"><input type="number" style={styles.input} value={draft.goal} onChange={(e) => setDraft({ ...draft, goal: +e.target.value })} /></Field>
+          <SaveBtn disabled={!draft.goal} onClick={() => saveDraft(() => setRewards((r) => ({ ...r, [draft.childId]: draft.goal })))} />
         </Sheet>
       );
     }
@@ -604,11 +618,18 @@ Donne, de façon structurée et concise :
       const isNew = !draft.id;
       return (
         <Sheet title={isNew ? "Nouveau contact" : "Modifier le contact"} onClose={close}>
+          <Field label="Emoji">
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {CONTACT_EMOJIS.map((em) => (
+                <button key={em} onClick={() => setDraft({ ...draft, emoji: em })} style={{ width: 40, height: 40, borderRadius: 12, border: "2px solid " + (draft.emoji === em ? T.primary : T.line), background: draft.emoji === em ? T.primarySoft : "#fff", fontSize: 18, cursor: "pointer" }}>{em}</button>
+              ))}
+            </div>
+          </Field>
           <Field label="Nom"><input style={styles.input} value={draft.name || ""} onChange={(e) => setDraft({ ...draft, name: e.target.value })} /></Field>
           <Field label="Rôle"><input style={styles.input} value={draft.role || ""} onChange={(e) => setDraft({ ...draft, role: e.target.value })} placeholder="Ex : Pédiatre" /></Field>
           <Field label="Téléphone"><input style={styles.input} value={draft.phone || ""} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} /></Field>
           <SaveBtn disabled={!draft.name} onClick={() => saveDraft(() => {
-            if (isNew) setContacts([...contacts, { ...draft, id: uid() }]);
+            if (isNew) setContacts([...contacts, { ...draft, id: uid(), emoji: draft.emoji || "📇" }]);
             else setContacts(contacts.map((x) => x.id === draft.id ? draft : x));
           })} />
         </Sheet>
@@ -659,6 +680,7 @@ Donne, de façon structurée et concise :
         </Sheet>
       );
     }
+
     return null;
   }
 
@@ -677,7 +699,7 @@ Donne, de façon structurée et concise :
           ))}
         </div>
 
-        {(aiMode === "anticiper") && (
+        {aiMode === "anticiper" && (
           <div style={{ ...styles.card, marginBottom: 14 }}>
             <div style={{ fontWeight: 700, color: T.ink, marginBottom: 6 }}>Analyse de votre semaine</div>
             <div style={{ fontSize: 13, color: T.muted, marginBottom: 12 }}>L'assistant lit votre charge de tâches, vos niveaux de stress et vos événements pour anticiper les besoins de la famille.</div>
@@ -760,23 +782,5 @@ Donne, de façon structurée et concise :
 
       {renderSheet()}
     </div>
-  );
-}
-
-function AddAmount({ onAdd }) {
-  const [v, setV] = useState("");
-  return (
-    <div style={{ display: "flex", gap: 6 }}>
-      <input type="number" value={v} onChange={(e) => setV(e.target.value)} placeholder="+€" style={{ width: 64, padding: "6px 8px", borderRadius: 10, border: "1px solid " + T.line, fontSize: 13, outline: "none" }} />
-      <button onClick={() => { const n = parseFloat(v); if (n > 0) { onAdd(n); setV(""); } }} style={{ border: "none", background: T.green, color: "#fff", borderRadius: 10, padding: "6px 12px", fontWeight: 700, cursor: "pointer", fontSize: 13 }}>OK</button>
-    </div>
-  );
-}
-
-function SaveBtn({ onClick, disabled }) {
-  return (
-    <button onClick={onClick} disabled={disabled} style={{ ...styles.btn, width: "100%", background: disabled ? T.line : T.primary, color: disabled ? T.muted : "#fff", marginTop: 6, cursor: disabled ? "not-allowed" : "pointer" }}>
-      Enregistrer
-    </button>
   );
 }
